@@ -1,73 +1,134 @@
 <?php
 require_once('../../config.php');
+require_once($CFG->dirroot.'/local/forget_password/classes/forget_password_form.php');
+require_once($CFG->libdir.'/authlib.php');
+require_once($CFG->dirroot.'/webservice/lib.php');
+
+$id = optional_param('id', SITEID, PARAM_INT); // current course
+
+if (!$course = $DB->get_record('course', array('id'=>$id))) {
+    print_error('invalidcourseid');
+}
+//system context
+$context_sys = context_system::instance();
+$PAGE->set_url('/local/forget_password/view.php', array('id'=>$id));
+$PAGE->set_context($context_sys);
+
+$strparticipants = get_string('participants');
+
+if (!$course = $DB->get_record('course', array('id'=>$id))) {
+    print_error('invalidcourseid');
+}
 
 if (!isloggedin() OR isguestuser()) {
     require_login();
     die;
 }
 
-$context_sys = context_system::instance();
-if(!has_capability('local/student:view', $context_sys)){
-    redirect($CFG->wwwroot);
-    die;
+//user context
+$PAGE->set_context(context_user::instance($USER->id));
+$PAGE->set_pagelayout('admin');
+$PAGE->set_course($course);
+
+// do not require change own password cap if change forced
+if (!get_user_preferences('auth_forcepasswordchange', false)) {
+    require_capability('moodle/user:changeownpassword', $context_sys);
 }
-require_once("classes/forget_password_form.php");
 
-$PAGE->set_url('/local/forget_password/view.php');
+// do not allow "Logged in as" users to change any passwords
+if (\core\session\manager::is_loggedinas()) {
+    print_error('cannotcallscript');
+}
 
-$PAGE->set_context($context_sys);
-$PAGE->set_pagelayout('standard');
-$title = get_string('pluginname', 'local_forget_password');
-$PAGE->navbar->add($title);
-$PAGE->set_heading($title);
-$PAGE->set_title($title);
-$PAGE->set_cacheable(false);
-$PAGE->requires->css('/local/forget_password/styles.css');
+//Don't Allow User MNet
+if (is_mnet_remote_user($USER)) {
+    $message = get_string('usercannotchangepassword', 'mnet');
+    if ($idprovider = $DB->get_record('mnet_host', array('id'=>$USER->mnethostid))) {
+        $message .= get_string('userchangepasswordlink', 'mnet', $idprovider);
+    }
+    print_error('userchangepasswordlink', 'mnet', '', $message);
+}
+
+// load the appropriate auth plugin
+$userauth = get_auth_plugin($USER->auth);
+
+//check user allows
+if (!$userauth->can_change_password()) {
+    print_error('nopasswordchange', 'auth');
+}
+
+if ($changeurl = $userauth->change_password_url()) {
+    // this internal scrip not used
+    redirect($changeurl);
+}
 
 $mform = new forget_password_form();
+$mform->set_data(array('id'=>$course->id));
 
-$forget_password = null; //error
-if ($fromform = $mform->get_data())
-    $forget_password = forget_password_form::validation($fromform->password, $fromform->password_confirm); // если что-то вернул, значит ошибка
+if ($mform->is_cancelled()) {
+    redirect($CFG->wwwroot.'/user/preferences.php?userid='.$USER->id.'&amp;course='.$course->id);
+}
+else if($data = $mform->get_data()) {
+    die();
+    if (!$userauth->user_update_password($USER, $data->newpassword1)) {
+        print_error('errorpasswordupdate', 'auth');
+    }
+
+    user_add_password_history($USER->id, $data->newpassword1);
+
+    if (!empty($CFG->passwordchangelogout)) {
+        \core\session\manager::kill_user_sessions($USER->id, session_id());
+    }
+
+    if (!empty($data->signoutofotherservices)) {
+        webservice::delete_user_ws_tokens($USER->id);
+    }
+
+    // Reset login lockout - we want to prevent any accidental confusion here.
+    login_unlock_account($USER);
+
+    // register success changing password
+    unset_user_preference('auth_forcepasswordchange', $USER);
+    unset_user_preference('create_password', $USER);
+
+    $strpasswordchanged = get_string('passwordchanged');
+
+    // Plugins can perform post password change actions once data has been validated.
+    core_login_post_change_password_requests($data);
+
+    $fullname = fullname($USER, true);
+
+    $PAGE->set_title($strpasswordchanged);
+    $PAGE->set_heading(fullname($USER));
+    echo $OUTPUT->header();
+
+    notice($strpasswordchanged, new moodle_url($PAGE->url, array('return'=>1)));
+
+    echo $OUTPUT->footer();
+    exit;
+}
+
+$strchangepassword = get_string('changepassword');
+
+$fullname = fullname($USER, true);
+
+$PAGE->set_title($strchangepassword);
+$PAGE->set_heading($fullname);
+echo $OUTPUT->header();
+
+if (get_user_preferences('auth_forcepasswordchange')) {
+    echo $OUTPUT->notification(get_string('forcepasswordchangenotice'));
+}
+$mform->display();
+echo $OUTPUT->footer();
 
 //test
-$event = \core\event\user_password_updated::create_from_user(array($user));
+/*$event = \core\event\user_password_updated::create_from_user(array($user));
 $this->assertEventContextNotUsed($event);
 $this->assertEquals($user->id, $event->relateduserid);
 $this->assertSame($context, $event->get_context());
 $this->assertEventLegacyLogData(null, $event);
 $this->assertFalse($event->other['forgottenreset']);
-$event->trigger();
-
-echo $OUTPUT->header();
-
-if($forget_password != null)//error
-    \core\notification::add(get_string('criticalerror', 'local_forget_password'));
-
-echo html_writer::start_tag('div', array(
-    'id' => 'forget_container'
-)),
-
-html_writer::start_tag('div', array(
-    'class' => 'forget_info alert alert-info alert-block fade in'
-)),
-
-html_writer::start_tag('b'),
-fullname($USER),
-html_writer::end_tag('b'),
-
-html_writer::end_tag('div'),
-
-html_writer::start_tag('div', array(
-    'class' => 'forget_form'
-));
-
-$mform->display();
-
-echo html_writer::end_tag('div'),
-
-html_writer::end_tag('div');
-
-echo $OUTPUT->footer();
+$event->trigger();*/
 
 ?>
