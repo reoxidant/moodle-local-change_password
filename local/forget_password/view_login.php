@@ -20,6 +20,7 @@ if ($mform->is_cancelled()) {
 
     $PAGE->set_title("$site->fullname: $loginsite");
     $PAGE->set_heading("$site->fullname");
+    $PAGE->requires->css('/local/forget_password/css/styles.css');
     echo $OUTPUT->header();
 
     notice($strpasswordchanged, new moodle_url($PAGE->url, array('return' => 1)));

@@ -3,6 +3,7 @@
 require_once("$CFG->libdir/formslib.php");
 require_once($CFG->dirroot . '/user/lib.php');
 require_once($CFG->dirroot . '/login/lib.php');
+require_once($CFG->dirroot . '/local/forget_password/lib.php');
 
 class forget_password_form extends moodleform
 {
@@ -40,9 +41,9 @@ class forget_password_form extends moodleform
             // Hook for plugins to extend form definition.
             core_login_extend_set_password_form($mform, $USER);
         } else {
-            $mform->addElement('text', 'username', get_string('username', 'local_forget_password'));
-            $mform->setType('username', PARAM_RAW);
-            $mform->addRule('username', get_string('required', 'local_forget_password'), 'required', null, 'client');
+            $mform->addElement('text', 'email', get_string('email', 'local_forget_password'));
+            $mform->setType('email', PARAM_RAW);
+            $mform->addRule('email', get_string('required', 'local_forget_password'), 'required', null, 'client');
 
             $mform->addElement('password', 'newpassword_log1', get_string('newpassword', 'local_forget_password'));
             $mform->addRule('newpassword_log1', get_string('required', 'local_forget_password'), 'required', null, 'client');
@@ -64,7 +65,7 @@ class forget_password_form extends moodleform
     /// perform extra password change validation
     function validation($data, $files)
     {
-        GLOBAL $USER;
+        GLOBAL $USER, $DB;
         $errors = parent::validation($data, $files);
         $reason = null;
 
@@ -99,12 +100,20 @@ class forget_password_form extends moodleform
 
         } else {
             // ignore submitted username
-
-            if (!$user = authenticate_user_login($data['username'], $data['newpassword_log1'], true, $reason, false)) {
-                $errors['newpassword_log1'] = get_string('invalidlogin', 'local_forget_password');
+/*            if (!$user = authenticate_user_login($data['username'], $data['newpassword_log1'], true, $reason, false)) {
+                $errors['username'] = get_string('invalidloginoremail', 'local_forget_password');
                 return $errors;
+            }*/
+            //TODO Надо вынуть из бд поле email и имя пользователя и закинуть в $data['username']
+            if($findebt_fieldid = $DB->get_record('user_info_field', array('shortname' => 'hasfindebt'), 'id')){
+                var_dump($findebt_fieldid);
+                die();
+                if($data['fields'] = $DB->get_record('user_info_data', array('fieldid' => $findebt_fieldid->id, 'userid' => $userid), 'data')){
+                    if(!isset($data->data))
+                        return false;
+                }
             }
-            var_dump($data);
+
             // Ignore submitted username.
             if ($data['newpassword_log1'] <> $data['newpassword_log2']) {
                 $errors['newpassword_log1'] = get_string('passwordsdiffer', 'local_forget_password');
@@ -113,13 +122,13 @@ class forget_password_form extends moodleform
             }
 
             $errmsg = ''; // Prevents eclipse warnings.
-            if (!check_password_policy($data['newpassword_log1'], $errmsg, $user)) {
+            if (!my_check_password_policy($data['newpassword_log1'], $errmsg, $data)) {
                 $errors['newpassword_log1'] = $errmsg;
                 $errors['newpassword_log2'] = $errmsg;
                 return $errors;
             }
 
-            if (user_is_previously_used_password($user->id, $data['newpassword_log1'])) {
+            if (user_is_previously_used_password($data->id, $data['newpassword_log1'])) {
                 $errors['newpassword_log1'] = get_string('errorpasswordreused', 'local_forget_password');
                 $errors['newpassword_log2'] = get_string('errorpasswordreused', 'local_forget_password');
             }
