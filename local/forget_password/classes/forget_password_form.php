@@ -101,27 +101,27 @@ class forget_password_form extends moodleform
             // ignore submitted username
 
             if (!$user = authenticate_user_login($data['username'], $data['newpassword_log1'], true, $reason, false)) {
-                $errors['password_log1'] = get_string('invalidlogin', 'local_forget_password');
+                $errors['newpassword_log1'] = get_string('invalidlogin', 'local_forget_password');
                 return $errors;
             }
-
+            var_dump($data);
             // Ignore submitted username.
-            if ($data['password_log1'] <> $data['password_log2']) {
-                $errors['password_log1'] = get_string('passwordsdiffer', 'local_forget_password');
-                $errors['password_log2'] = get_string('passwordsdiffer', 'local_forget_password');
+            if ($data['newpassword_log1'] <> $data['newpassword_log2']) {
+                $errors['newpassword_log1'] = get_string('passwordsdiffer', 'local_forget_password');
+                $errors['newpassword_log2'] = get_string('passwordsdiffer', 'local_forget_password');
                 return $errors;
             }
 
             $errmsg = ''; // Prevents eclipse warnings.
-            if (!check_password_policy($data['password_log1'], $errmsg, $user)) {
-                $errors['password_log1'] = $errmsg;
-                $errors['password_log2'] = $errmsg;
+            if (!check_password_policy($data['newpassword_log1'], $errmsg, $user)) {
+                $errors['newpassword_log1'] = $errmsg;
+                $errors['newpassword_log2'] = $errmsg;
                 return $errors;
             }
 
-            if (user_is_previously_used_password($user->id, $data['password_log1'])) {
-                $errors['password_log1'] = get_string('errorpasswordreused', 'local_forget_password');
-                $errors['password_log2'] = get_string('errorpasswordreused', 'local_forget_password');
+            if (user_is_previously_used_password($user->id, $data['newpassword_log1'])) {
+                $errors['newpassword_log1'] = get_string('errorpasswordreused', 'local_forget_password');
+                $errors['newpassword_log2'] = get_string('errorpasswordreused', 'local_forget_password');
             }
         }
         return $errors;
