@@ -11,51 +11,46 @@ if(!has_capability('local/student:view', $context_sys)){
     redirect($CFG->wwwroot);
     die;
 }
-
-require_once("locallib.php");
+require_once("classes/forget_password_form.php");
 
 $PAGE->set_url('/local/forget_password/view.php');
 
 $PAGE->set_context($context_sys);
 $PAGE->set_pagelayout('standard');
-$title = get_string('pluginname', 'local_student_pay');
+$title = get_string('pluginname', 'local_forget_password');
 $PAGE->navbar->add($title);
 $PAGE->set_heading($title);
 $PAGE->set_title($title);
 $PAGE->set_cacheable(false);
-$PAGE->requires->css('/local/student_pay/styles.css');
+$PAGE->requires->css('/local/forget_password/styles.css');
 
-$mform = new pay_form;
+$mform = new forget_password_form();
 
-$pay_result = null;
+$forget_password = null; //error
 if ($fromform = $mform->get_data())
-    $pay_result = student_pay::do_pay($fromform->summ, $fromform->goods_type); // если что-то вернул, значит ошибка
+    $forget_password = forget_password_form::validation($fromform->password, $fromform->password_confirm); // если что-то вернул, значит ошибка
 
-$event = \local_student_pay\event\student_pay_viewed::create(array(
-    'objectid' => null,
-    'context' => $context_sys,
-));
+//test
+$event = \core\event\user_password_updated::create_from_user(array($user));
+$this->assertEventContextNotUsed($event);
+$this->assertEquals($user->id, $event->relateduserid);
+$this->assertSame($context, $event->get_context());
+$this->assertEventLegacyLogData(null, $event);
+$this->assertFalse($event->other['forgottenreset']);
 $event->trigger();
 
 echo $OUTPUT->header();
 
-
-if($pay_result != null)
-    \core\notification::add(get_string('criticalerror', 'local_student_pay'));
-elseif (isset($_GET['fail']))
-    \core\notification::warning(get_string('payerror', 'local_student_pay'));
-elseif (isset($_GET['ok']))
-    \core\notification::add(get_string('payok', 'local_student_pay'), \core\notification::INFO);
+if($forget_password != null)//error
+    \core\notification::add(get_string('criticalerror', 'local_forget_password'));
 
 echo html_writer::start_tag('div', array(
-    'id' => 'pay_container'
+    'id' => 'forget_container'
 )),
 
 html_writer::start_tag('div', array(
-    'class' => 'pay_info alert alert-info alert-block fade in'
+    'class' => 'forget_info alert alert-info alert-block fade in'
 )),
-
-get_string('invoice', 'local_student_pay'),
 
 html_writer::start_tag('b'),
 fullname($USER),
@@ -64,7 +59,7 @@ html_writer::end_tag('b'),
 html_writer::end_tag('div'),
 
 html_writer::start_tag('div', array(
-    'class' => 'pay_form'
+    'class' => 'forget_form'
 ));
 
 $mform->display();
@@ -72,10 +67,6 @@ $mform->display();
 echo html_writer::end_tag('div'),
 
 html_writer::end_tag('div');
-
-require("faq.php");
-
-$PAGE->requires->js('/local/student_pay/js/main.js');
 
 echo $OUTPUT->footer();
 
