@@ -5,6 +5,7 @@ require_once($CFG->libdir . '/authlib.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 
 $id = optional_param('id', SITEID, PARAM_INT); // current course
+$token = optional_param('token', '', PARAM_TEXT);
 
 if (!$course = $DB->get_record('course', array('id' => $id))) {
     print_error('invalidcourseid');
@@ -19,14 +20,6 @@ $strparticipants = get_string('participants');
 
 if (!$course = $DB->get_record('course', array('id' => $id))) {
     print_error('invalidcourseid');
-}
-
-// Fetch the token from the session, if present, and unset the session var immediately.
-$tokeninsession = false;
-if (!empty($SESSION->password_reset_token)) {
-    $token = $SESSION->password_reset_token;
-    unset($SESSION->password_reset_token);
-    $tokeninsession = true;
 }
 
 if (!empty($token)) {
