@@ -103,12 +103,6 @@ class forget_password_form extends moodleform
             }
 
         } else {
-            // ignore submitted username
-/*            if (!$user = authenticate_user_login($data['username'], $data['newpassword_log1'], true, $reason, false)) {
-                $errors['username'] = get_string('invalidloginoremail', 'local_forget_password');
-                return $errors;
-            }*/
-
             //check if is set username
             $data['usernames'] = array_keys($DB->get_records('user', array(), '', 'username'));
 
@@ -117,9 +111,11 @@ class forget_password_form extends moodleform
                 return $errors;
             }
 
-            $userId = $DB->get_record('user',  array('username' => $data['username']), 'id');
+            $user = $DB->get_record('user',  array('username' => $data['username']), 'id, firstname');
 
-            if($email_user = $DB->get_record('user_info_data', array('userid' => $userId->id), 'data')){
+            $data['firstName'] = $user->firstname;
+
+            if($email_user = $DB->get_record('user_info_data', array('userid' => $user->id), 'data')){
                 $data['active_user_email'] = $email_user;
             }
 
@@ -129,9 +125,6 @@ class forget_password_form extends moodleform
                 $errors['newpassword_log2'] = get_string('passwordsdiffer', 'local_forget_password');
                 return $errors;
             }
-
-            var_dump($data);
-            die();
 
             $errmsg = ''; // Prevents eclipse warnings.
             if (!my_check_password_policy($data['newpassword_log1'], $errmsg, $data)) {
