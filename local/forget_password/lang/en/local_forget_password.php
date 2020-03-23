@@ -14,3 +14,4 @@ $string['loginsite'] = 'Log in to the site';
 $string['errormatchpasswordandusername'] = 'You can\'t use your account name in your password';
 $string['errorminpassworddigits'] = 'Passwords must have at least {$a} digit(s).';
 $string['email'] = 'E-mail';
+$string['usernameisnotundefined'] = 'Username is not undefined';

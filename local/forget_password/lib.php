@@ -4,8 +4,8 @@ require_once($CFG->libdir.'/moodlelib.php');
 
 function my_check_password_policy($password, &$errmsg, $data = null) {
     global $CFG;
-    var_dump($data);
-    die('validate');
+//    var_dump($data);
+//    die('validate');
     if (!empty($CFG->passwordpolicy)) {
         $errmsg = '';
         //не менее 8 символов
@@ -38,8 +38,8 @@ function my_check_password_policy($password, &$errmsg, $data = null) {
     // Plugin functions should output an error message string or empty string for success.
     $pluginsfunction = get_plugins_with_function('my_check_password_policy');
 
-    var_dump($CFG->minpasswordupper);
-    die();
+//    var_dump($CFG->minpasswordupper);
+//    die();
     foreach ($pluginsfunction as $plugintype => $plugins) {
         foreach ($plugins as $pluginfunction) {
             $pluginerr = $pluginfunction($password, $user);

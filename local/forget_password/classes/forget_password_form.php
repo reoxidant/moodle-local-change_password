@@ -41,9 +41,13 @@ class forget_password_form extends moodleform
             // Hook for plugins to extend form definition.
             core_login_extend_set_password_form($mform, $USER);
         } else {
-            $mform->addElement('text', 'email', get_string('email', 'local_forget_password'));
+/*            $mform->addElement('text', 'email', get_string('email', 'local_forget_password'));
             $mform->setType('email', PARAM_RAW);
-            $mform->addRule('email', get_string('required', 'local_forget_password'), 'required', null, 'client');
+            $mform->addRule('email', get_string('required', 'local_forget_password'), 'required', null, 'client');*/
+
+            $mform->addElement('text', 'username', get_string('username', 'local_forget_password'));
+            $mform->setType('username', PARAM_RAW);
+            $mform->addRule('username', get_string('required', 'local_forget_password'), 'required', null, 'client');
 
             $mform->addElement('password', 'newpassword_log1', get_string('newpassword', 'local_forget_password'));
             $mform->addRule('newpassword_log1', get_string('required', 'local_forget_password'), 'required', null, 'client');
@@ -104,12 +108,11 @@ class forget_password_form extends moodleform
                 $errors['username'] = get_string('invalidloginoremail', 'local_forget_password');
                 return $errors;
             }*/
-            //TODO Надо вынуть из бд поле email и имя пользователя и закинуть в $data['username']
-            if($findebt_fieldid = $DB->get_record('user_info_field', array('shortname' => 'hasfindebt'), 'id')){
-                var_dump($findebt_fieldid);
-                die();
-                if($data['fields'] = $DB->get_record('user_info_data', array('fieldid' => $findebt_fieldid->id, 'userid' => $userid), 'data')){
-                    if(!isset($data->data))
+
+            if($email_field_id = $DB->get_record('user_info_field', array("shortname" => "student_email"), 'id')){
+                if($data['field'] = $DB->get_record('user_info_data', array('fieldid' => $email_field_id->id), 'data')){
+                    if(!isset($data['field']->data))
+                        $errors['username'] = get_string('usernameisnotundefined', 'local_forget_password');;
                         return false;
                 }
             }
