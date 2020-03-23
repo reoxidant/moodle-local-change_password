@@ -109,12 +109,18 @@ class forget_password_form extends moodleform
                 return $errors;
             }*/
 
-            if($email_field_id = $DB->get_record('user_info_field', array("shortname" => "student_email"), 'id')){
-                if($data['field'] = $DB->get_record('user_info_data', array('fieldid' => $email_field_id->id), 'data')){
-                    if(!isset($data['field']->data))
-                        $errors['username'] = get_string('usernameisnotundefined', 'local_forget_password');;
-                        return false;
-                }
+            //check if is set username
+            $data['usernames'] = array_keys($DB->get_records('user', array(), '', 'username'));
+
+            if(!$username = in_array($data['username'], $data['usernames'])){
+                $errors['username'] = get_string('usernameisnotundefined', 'local_forget_password');
+                return $errors;
+            }
+
+            $userId = $DB->get_record('user',  array('username' => $data['username']), 'id');
+
+            if($email_user = $DB->get_record('user_info_data', array('userid' => $userId->id), 'data')){
+                $data['active_user_email'] = $email_user;
             }
 
             // Ignore submitted username.
@@ -123,6 +129,9 @@ class forget_password_form extends moodleform
                 $errors['newpassword_log2'] = get_string('passwordsdiffer', 'local_forget_password');
                 return $errors;
             }
+
+            var_dump($data);
+            die();
 
             $errmsg = ''; // Prevents eclipse warnings.
             if (!my_check_password_policy($data['newpassword_log1'], $errmsg, $data)) {
