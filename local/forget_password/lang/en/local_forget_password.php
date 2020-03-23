@@ -21,3 +21,7 @@ $string['errorminpasswordlower'] = 'Passwords must have at least {$a} lower case
 $string['errorminpasswordupper'] = 'Passwords must have at least {$a} upper case letter(s).';
 $string['errorminpasswordnonalphanum'] = 'Passwords must have at least {$a} non-alphanumeric character(s) such as as *, -, or #.';
 $string['errormaxconsecutiveidentchars'] = 'Passwords must have at most {$a} consecutive identical characters.';
+$string['passwordsenttext'] = '<p>An email has been sent to your address at {$a->email}.</p>
+   <p><b>Please check your email for your new password</b></p>
+   <p>The new password was automatically generated, so you might like to
+   <a href="{$a->link}">change it to something easier to remember</a>.</p>';

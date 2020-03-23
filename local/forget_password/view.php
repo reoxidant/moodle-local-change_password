@@ -21,6 +21,23 @@ if (!$course = $DB->get_record('course', array('id' => $id))) {
     print_error('invalidcourseid');
 }
 
+// Fetch the token from the session, if present, and unset the session var immediately.
+$tokeninsession = false;
+if (!empty($SESSION->password_reset_token)) {
+    $token = $SESSION->password_reset_token;
+    unset($SESSION->password_reset_token);
+    $tokeninsession = true;
+}
+
+if (!empty($token)) {
+    if (!$tokeninsession && $_SERVER['REQUEST_METHOD'] === 'GET') {
+        $SESSION->password_reset_token = $token;
+        redirect($CFG->wwwroot . '/local/forget_password/view.php');
+    } else {
+        core_login_process_password_set($token);
+    }
+}
+
 if (!isloggedin() OR isguestuser()) {
     require_once('view_login.php');
 } else {

@@ -41,10 +41,6 @@ class forget_password_form extends moodleform
             // Hook for plugins to extend form definition.
             core_login_extend_set_password_form($mform, $USER);
         } else {
-/*            $mform->addElement('text', 'email', get_string('email', 'local_forget_password'));
-            $mform->setType('email', PARAM_RAW);
-            $mform->addRule('email', get_string('required', 'local_forget_password'), 'required', null, 'client');*/
-
             $mform->addElement('text', 'username', get_string('username', 'local_forget_password'));
             $mform->setType('username', PARAM_RAW);
             $mform->addRule('username', get_string('required', 'local_forget_password'), 'required', null, 'client');
@@ -132,8 +128,7 @@ class forget_password_form extends moodleform
                 $errors['newpassword_log2'] = $errmsg;
                 return $errors;
             }
-
-            if (user_is_previously_used_password($data->id, $data['newpassword_log1'])) {
+            if (user_is_previously_used_password($user->id, $data['newpassword_log1'])) {
                 $errors['newpassword_log1'] = get_string('errorpasswordreused', 'local_forget_password');
                 $errors['newpassword_log2'] = get_string('errorpasswordreused', 'local_forget_password');
             }

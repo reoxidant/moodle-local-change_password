@@ -16,24 +16,28 @@ $mform = new forget_password_form();
 if ($mform->is_cancelled()) {
     redirect($CFG->wwwroot . '/login/index.php');
 } else if ($data = $mform->get_data()) {
-    $strpasswordchanged = get_string('passwordchanged');
+    $strpasswordchanged = get_string('passwordsenttext', 'local_forget_password');
+
+    if(empty($token)){
+        $user_field = $DB->get_record('user', array('username' => $data->username), 'email');
+
+        core_login_process_password_reset($data->username, $user_field->email);
+    }
 
     $PAGE->set_title("$site->fullname: $loginsite");
     $PAGE->set_heading("$site->fullname");
     $PAGE->requires->css('/local/forget_password/css/styles.css');
     echo $OUTPUT->header();
 
-    notice($strpasswordchanged, new moodle_url($PAGE->url, array('return' => 1)));
+    notice($strpasswordchanged, new moodle_url('/login/index.php'));
 
     echo $OUTPUT->footer();
     exit;
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->box_start();
 if (get_user_preferences('auth_forcepasswordchange')) {
     echo $OUTPUT->notification(get_string('forcepasswordchangenotice'));
 }
 $mform->display();
-echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
