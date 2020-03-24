@@ -1,14 +1,15 @@
 <?php
-/// Define variables used in page
-$site = get_site();
+$systemcontext = context_system::instance();
+$PAGE->set_context($systemcontext);
 
-//set context login
-$PAGE->set_context($context_sys);
-$PAGE->set_pagelayout('login');
+// setup text strings
+$strforgotten = get_string('passwordforgotten');
+$strlogin     = get_string('login');
 
-$PAGE->navbar->ignore_active();
-$loginsite = get_string("loginsite", "local_forget_password");
-$PAGE->navbar->add($loginsite);
+$PAGE->navbar->add($strlogin, get_login_url());
+$PAGE->navbar->add($strforgotten);
+$PAGE->set_title($strforgotten);
+$PAGE->set_heading($COURSE->fullname);
 
 //user context
 $mform = new forget_password_form();
@@ -22,8 +23,8 @@ if ($mform->is_cancelled()) {
         core_login_user_password_reset($data->username, $user_field->email);
     }
 
-    $PAGE->set_title("$site->fullname: $loginsite");
-    $PAGE->set_heading("$site->fullname");
+    $PAGE->set_title($strforgotten);
+    $PAGE->set_heading($COURSE->fullname);
     $PAGE->requires->css('/local/forget_password/css/styles.css');
     echo $OUTPUT->header();
 
@@ -34,8 +35,6 @@ if ($mform->is_cancelled()) {
 }
 
 echo $OUTPUT->header();
-if (get_user_preferences('auth_forcepasswordchange')) {
-    echo $OUTPUT->notification(get_string('forcepasswordchangenotice'));
-}
+echo $OUTPUT->box(get_string('passwordforgotteninstructions2'), 'generalbox boxwidthnormal boxaligncenter');
 $mform->display();
 echo $OUTPUT->footer();

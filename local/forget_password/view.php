@@ -17,6 +17,15 @@ $context_sys = context_system::instance();
 $PAGE->set_url('/local/forget_password/view.php', array('id' => $id));
 $PAGE->set_context($context_sys);
 
+// setup text strings
+$strforgotten = get_string('passwordforgotten');
+$strlogin     = get_string('login');
+
+$PAGE->navbar->add($strlogin, get_login_url());
+$PAGE->navbar->add($strforgotten);
+$PAGE->set_title($strforgotten);
+$PAGE->set_heading($COURSE->fullname);
+
 $strparticipants = get_string('participants');
 
 if (!$course = $DB->get_record('course', array('id' => $id))) {
