@@ -44,13 +44,9 @@ if (empty($data)) {
         // Unset previous session language - use user preference instead.
         unset($SESSION->lang);
     }
-//    complete_user_login($user); // Triggers the login event.
-
-//    \core\session\manager::apply_concurrent_login_limit($user->id, session_id());
 
     $urltogo = core_login_get_return_url();
     unset($SESSION->wantsurl);
-    var_dump($urltogo);
     // Plugins can perform post set password actions once data has been validated.
 //    core_login_post_set_password_requests($data, $user);
 
