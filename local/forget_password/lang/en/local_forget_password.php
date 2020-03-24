@@ -24,3 +24,4 @@ $string['errormaxconsecutiveidentchars'] = 'Passwords must have at most {$a} con
 $string['emailpasswordconfirmmaybesent'] = '<p>If you supplied a correct username or email address then an email should have been sent to you.</p>
    <p>It contains easy instructions to confirm and complete this password change.
 If you continue to have difficulty, please contact the site administrator.</p>';
+$string['invalidpassword'] = 'Invalid password, please try again';

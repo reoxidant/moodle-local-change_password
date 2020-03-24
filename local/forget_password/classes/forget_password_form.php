@@ -2,7 +2,6 @@
 
 require_once("$CFG->libdir/formslib.php");
 require_once($CFG->dirroot . '/user/lib.php');
-require_once($CFG->dirroot . '/login/lib.php');
 require_once($CFG->dirroot . '/local/forget_password/lib.php');
 
 class forget_password_form extends moodleform
@@ -44,14 +43,6 @@ class forget_password_form extends moodleform
             $mform->addElement('text', 'username', get_string('username', 'local_forget_password'));
             $mform->setType('username', PARAM_RAW);
             $mform->addRule('username', get_string('required', 'local_forget_password'), 'required', null, 'client');
-
-/*            $mform->addElement('password', 'newpassword_log1', get_string('newpassword', 'local_forget_password'));
-            $mform->addRule('newpassword_log1', get_string('required', 'local_forget_password'), 'required', null, 'client');
-            $mform->setType('newpassword_log1', PARAM_RAW);
-
-            $mform->addElement('password', 'newpassword_log2', get_string('newpassword', 'local_forget_password') . ' (' . get_String('again', 'local_forget_password') . ')');
-            $mform->addRule('newpassword_log2', get_string('required', 'local_forget_password'), 'required', null, 'client');
-            $mform->setType('newpassword_log2', PARAM_RAW);*/
         }
 
         // buttons
@@ -74,27 +65,33 @@ class forget_password_form extends moodleform
 
             // ignore submitted username
             if (!$user = authenticate_user_login($USER->username, $data['password'], true, $reason, false)) {
-                $errors['password'] = get_string('invalidlogin', 'local_forget_password');
+                $errors['password'] = get_string('invalidpassword', 'local_forget_password');
                 return $errors;
             }
 
             // Ignore submitted username.
-            if ($data['password'] <> $data['password2']) {
-                $errors['password'] = get_string('passwordsdiffer', 'local_forget_password');
-                $errors['password2'] = get_string('passwordsdiffer', 'local_forget_password');
+            if ($data['newpassword1'] <> $data['newpassword2']) {
+                $errors['newpassword1'] = get_string('passwordsdiffer', 'local_forget_password');
+                $errors['newpassword2'] = get_string('passwordsdiffer', 'local_forget_password');
                 return $errors;
+            }
+
+            if ($data['password'] == $data['newpassword1']){
+                $errors['newpassword1'] = get_string('mustchangepassword');
+                $errors['newpassword2'] = get_string('mustchangepassword');
+                return $errors;
+            }
+
+            if (user_is_previously_used_password($user->id, $data['password1'])) {
+                $errors['newpassword1'] = get_string('errorpasswordreused', 'local_forget_password');
+                $errors['newpassword2'] = get_string('errorpasswordreused', 'local_forget_password');
             }
 
             $errmsg = ''; // Prevents eclipse warnings.
-            if (!check_password_policy($data['password'], $errmsg, $user)) {
-                $errors['password'] = $errmsg;
-                $errors['password2'] = $errmsg;
+            if (!my_check_password_policy($data['newpassword1'], $errmsg, $user)) {
+                $errors['newpassword1'] = $errmsg;
+                $errors['newpassword2'] = $errmsg;
                 return $errors;
-            }
-
-            if (user_is_previously_used_password($user->id, $data['password'])) {
-                $errors['password'] = get_string('errorpasswordreused', 'local_forget_password');
-                $errors['password2'] = get_string('errorpasswordreused', 'local_forget_password');
             }
 
         } else {
@@ -105,12 +102,6 @@ class forget_password_form extends moodleform
                 $errors['username'] = get_string('usernameisnotundefined', 'local_forget_password');
                 return $errors;
             }
-
-/*            $user = $DB->get_record('user',  array('username' => $data['username']), 'id, firstname');
-
-            if($email_user = $DB->get_record('user_info_data', array('userid' => $user->id), 'data')){
-                $data['active_user_email'] = $email_user;
-            }*/
         }
         return $errors;
     }

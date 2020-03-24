@@ -26,7 +26,7 @@ if (empty($data)) {
     // Delete this token so it can't be used again.
     $DB->delete_records('user_password_resets', array('id' => $user->tokenid));
     $userauth = get_auth_plugin($user->auth);
-    var_dump($data);
+
     if (!$userauth->user_update_password($user, $data->newpassword_log1)) {
         print_error('errorpasswordupdate', 'auth');
     }
@@ -48,7 +48,7 @@ if (empty($data)) {
     $urltogo = core_login_get_return_url();
     unset($SESSION->wantsurl);
     // Plugins can perform post set password actions once data has been validated.
-//    core_login_post_set_password_requests($data, $user);
+    // core_login_post_set_password_requests($data, $user);
 
     redirect($urltogo, get_string('passwordset'), 1);
 }

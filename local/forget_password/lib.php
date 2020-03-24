@@ -13,7 +13,7 @@ function my_check_password_policy($password, &$errmsg, $data = null) {
             $errmsg .= '<div>'. get_string('errorminpasswordlength', 'local_forget_password', $CFG->minpasswordlength) .'</div>';
         }
         //использовать имя своей учетной записи в пароле, не более чем два символа подряд из username или Firstname
-        if (substr($password, 0, 3) == substr($data['username'], 0, 3) || substr($password, 0, 3) == mb_substr($data['firstName'], 0, 3)) {
+        if (substr($password, 0, 3) == substr(is_object($data) ? $data->username : $data['username'], 0, 3) || substr($password, 0, 3) == mb_substr(is_object($data) ? $data->firstname : $data['firstName'], 0, 3)) {
             $errmsg .= '<div>'. get_string('errormatchpasswordandusername', 'local_forget_password', $CFG->minpasswordlength) .'</div>';
         }
         //Проверка на использование верних и нижних регистров
