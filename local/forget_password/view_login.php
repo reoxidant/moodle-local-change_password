@@ -16,12 +16,10 @@ $mform = new forget_password_form();
 if ($mform->is_cancelled()) {
     redirect($CFG->wwwroot . '/login/index.php');
 } else if ($data = $mform->get_data()) {
-    $strpasswordchanged = get_string('passwordsenttext', 'local_forget_password');
-
+    $strpasswordchanged = get_string('emailpasswordconfirmmaybesent', 'local_forget_password');
     if(empty($token)){
         $user_field = $DB->get_record('user', array('username' => $data->username), 'email');
-
-        core_login_process_password_reset($data->username, $user_field->email);
+        core_login_user_password_reset($data->username, $user_field->email);
     }
 
     $PAGE->set_title("$site->fullname: $loginsite");

@@ -1,11 +1,12 @@
 <?php
 require_once('../../config.php');
+require_once($CFG->dirroot . '/local/forget_password/classes/set_new_password_form.php');
 require_once($CFG->dirroot . '/local/forget_password/classes/forget_password_form.php');
 require_once($CFG->libdir . '/authlib.php');
-require_once($CFG->dirroot . '/webservice/lib.php');
+require_once($CFG->dirroot . '/local/forget_password/lib.php');
 
 $id = optional_param('id', SITEID, PARAM_INT); // current course
-$token = optional_param('token', '', PARAM_TEXT);
+$token = optional_param('token', false, PARAM_ALPHANUM);
 
 if (!$course = $DB->get_record('course', array('id' => $id))) {
     print_error('invalidcourseid');
@@ -22,12 +23,20 @@ if (!$course = $DB->get_record('course', array('id' => $id))) {
     print_error('invalidcourseid');
 }
 
+// Fetch the token from the session, if present, and unset the session var immediately.
+$tokeninsession = false;
+if (!empty($SESSION->password_reset_token)) {
+    $token = $SESSION->password_reset_token;
+    unset($SESSION->password_reset_token);
+    $tokeninsession = true;
+}
+
 if (!empty($token)) {
     if (!$tokeninsession && $_SERVER['REQUEST_METHOD'] === 'GET') {
         $SESSION->password_reset_token = $token;
         redirect($CFG->wwwroot . '/local/forget_password/view.php');
     } else {
-        core_login_process_password_set($token);
+        core_login_token_update_password($token);
     }
 }
 

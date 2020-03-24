@@ -45,13 +45,13 @@ class forget_password_form extends moodleform
             $mform->setType('username', PARAM_RAW);
             $mform->addRule('username', get_string('required', 'local_forget_password'), 'required', null, 'client');
 
-            $mform->addElement('password', 'newpassword_log1', get_string('newpassword', 'local_forget_password'));
+/*            $mform->addElement('password', 'newpassword_log1', get_string('newpassword', 'local_forget_password'));
             $mform->addRule('newpassword_log1', get_string('required', 'local_forget_password'), 'required', null, 'client');
             $mform->setType('newpassword_log1', PARAM_RAW);
 
             $mform->addElement('password', 'newpassword_log2', get_string('newpassword', 'local_forget_password') . ' (' . get_String('again', 'local_forget_password') . ')');
             $mform->addRule('newpassword_log2', get_string('required', 'local_forget_password'), 'required', null, 'client');
-            $mform->setType('newpassword_log2', PARAM_RAW);
+            $mform->setType('newpassword_log2', PARAM_RAW);*/
         }
 
         // buttons
@@ -67,7 +67,6 @@ class forget_password_form extends moodleform
     {
         GLOBAL $USER, $DB;
         $errors = parent::validation($data, $files);
-        $reason = null;
 
         // Extend validation for any form extensions from plugins.
         if (isloggedin() OR isguestuser()) {
@@ -107,31 +106,11 @@ class forget_password_form extends moodleform
                 return $errors;
             }
 
-            $user = $DB->get_record('user',  array('username' => $data['username']), 'id, firstname');
-
-            $data['firstName'] = $user->firstname;
+/*            $user = $DB->get_record('user',  array('username' => $data['username']), 'id, firstname');
 
             if($email_user = $DB->get_record('user_info_data', array('userid' => $user->id), 'data')){
                 $data['active_user_email'] = $email_user;
-            }
-
-            // Ignore submitted username.
-            if ($data['newpassword_log1'] <> $data['newpassword_log2']) {
-                $errors['newpassword_log1'] = get_string('passwordsdiffer', 'local_forget_password');
-                $errors['newpassword_log2'] = get_string('passwordsdiffer', 'local_forget_password');
-                return $errors;
-            }
-
-            $errmsg = ''; // Prevents eclipse warnings.
-            if (!my_check_password_policy($data['newpassword_log1'], $errmsg, $data)) {
-                $errors['newpassword_log1'] = $errmsg;
-                $errors['newpassword_log2'] = $errmsg;
-                return $errors;
-            }
-            if (user_is_previously_used_password($user->id, $data['newpassword_log1'])) {
-                $errors['newpassword_log1'] = get_string('errorpasswordreused', 'local_forget_password');
-                $errors['newpassword_log2'] = get_string('errorpasswordreused', 'local_forget_password');
-            }
+            }*/
         }
         return $errors;
     }
