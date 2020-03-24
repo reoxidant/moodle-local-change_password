@@ -6,7 +6,8 @@ require_once($CFG->dirroot . '/local/forget_password/lib.php');
 
 class set_new_password_form extends moodleform
 {
-    public function definition() {
+    public function definition()
+    {
         global $CFG;
 
         $mform = $this->_form;
@@ -49,12 +50,13 @@ class set_new_password_form extends moodleform
         }
     }
 
-    public function validation($data, $files) {
+    public function validation($data, $files)
+    {
         global $DB;
 
         $errors = parent::validation($data, $files);
 
-        $user = $DB->get_record('user',  array('username' => $data['username']), 'id, firstname');
+        $user = $DB->get_record('user', array('username' => $data['username']), 'id, firstname');
 
         $data['firstName'] = $user->firstname;
 

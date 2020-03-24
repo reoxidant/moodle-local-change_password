@@ -16,14 +16,6 @@ if (!$course = $DB->get_record('course', array('id' => $id))) {
 $context_sys = context_system::instance();
 $PAGE->set_url('/local/forget_password/view.php', array('id' => $id));
 $PAGE->set_context($context_sys);
-
-// setup text strings
-$strforgotten = get_string('passwordforgotten');
-$strlogin     = get_string('login');
-
-$PAGE->navbar->add($strlogin, get_login_url());
-$PAGE->navbar->add($strforgotten);
-$PAGE->set_title($strforgotten);
 $PAGE->set_heading($COURSE->fullname);
 
 $strparticipants = get_string('participants');
@@ -95,42 +87,6 @@ if (!isloggedin() OR isguestuser()) {
         redirect($CFG->wwwroot . '/user/preferences.php?userid=' . $USER->id . '&amp;course=' . $course->id);
     } else if ($data = $mform->get_data()) {
 
-       /* if (!$userauth->user_update_password($USER, $data->newpassword1)) {
-            print_error('errorpasswordupdate', 'auth');
-        }
-
-        user_add_password_history($USER->id, $data->newpassword1);
-
-        if (!empty($CFG->passwordchangelogout)) {
-            \core\session\manager::kill_user_sessions($USER->id, session_id());
-        }
-
-        if (!empty($data->signoutofotherservices)) {
-            webservice::delete_user_ws_tokens($USER->id);
-        }
-
-        // Reset login lockout - we want to prevent any accidental confusion here.
-        login_unlock_account($USER);
-
-        // register success changing password
-        unset_user_preference('auth_forcepasswordchange', $USER);
-        unset_user_preference('create_password', $USER);
-
-        $strpasswordchanged = get_string('passwordchanged');
-
-        // Plugins can perform post password change actions once data has been validated.
-        core_login_post_change_password_requests($data);
-
-        $fullname = fullname($USER, true);
-
-        $PAGE->set_title($strpasswordchanged);
-        $PAGE->set_heading(fullname($USER));
-        echo $OUTPUT->header();
-
-        notice($strpasswordchanged, new moodle_url($PAGE->url, array('return' => 1)));
-
-        echo $OUTPUT->footer();
-        exit;*/
         if (!$userauth->user_update_password($USER, $data->newpassword1)) {
             print_error('errorpasswordupdate', 'auth');
         }
@@ -163,7 +119,7 @@ if (!isloggedin() OR isguestuser()) {
         $PAGE->set_heading(fullname($USER));
         echo $OUTPUT->header();
 
-        notice($strpasswordchanged, new moodle_url($PAGE->url, array('return'=>1)));
+        notice($strpasswordchanged, new moodle_url($PAGE->url, array('return' => 1)));
 
         echo $OUTPUT->footer();
         exit;

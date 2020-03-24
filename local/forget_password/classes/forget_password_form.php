@@ -76,7 +76,7 @@ class forget_password_form extends moodleform
                 return $errors;
             }
 
-            if ($data['password'] == $data['newpassword1']){
+            if ($data['password'] == $data['newpassword1']) {
                 $errors['newpassword1'] = get_string('mustchangepassword');
                 $errors['newpassword2'] = get_string('mustchangepassword');
                 return $errors;
@@ -98,7 +98,7 @@ class forget_password_form extends moodleform
             //check if is set username
             $data['usernames'] = array_keys($DB->get_records('user', array(), '', 'username'));
 
-            if(!$username = in_array($data['username'], $data['usernames'])){
+            if (!$username = in_array($data['username'], $data['usernames'])) {
                 $errors['username'] = get_string('usernameisnotundefined', 'local_forget_password');
                 return $errors;
             }

@@ -17,6 +17,7 @@ $string['email'] = 'E-mail';
 $string['usernameisnotundefined'] = 'Username is not undefined';
 $string['errormatchpasswordandusername'] = 'You can\'t use your account name in your password';
 $string['errorminpasswordlength'] = 'Passwords must be at least {$a} characters long.';
+$string['errormaxpasswordlength'] = 'Password must be contain no more than {$a} characters long';
 $string['errorminpasswordlower'] = 'Passwords must have at least {$a} lower case letter(s).';
 $string['errorminpasswordupper'] = 'Passwords must have at least {$a} upper case letter(s).';
 $string['errorminpasswordnonalphanum'] = 'Passwords must have at least {$a} non-alphanumeric character(s) such as as *, -, or #.';

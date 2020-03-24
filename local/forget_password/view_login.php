@@ -4,7 +4,7 @@ $PAGE->set_context($systemcontext);
 
 // setup text strings
 $strforgotten = get_string('passwordforgotten');
-$strlogin     = get_string('login');
+$strlogin = get_string('login');
 
 $PAGE->navbar->add($strlogin, get_login_url());
 $PAGE->navbar->add($strforgotten);
@@ -18,7 +18,7 @@ if ($mform->is_cancelled()) {
     redirect($CFG->wwwroot . '/login/index.php');
 } else if ($data = $mform->get_data()) {
     $strpasswordchanged = get_string('emailpasswordconfirmmaybesent', 'local_forget_password');
-    if(empty($token)){
+    if (empty($token)) {
         $user_field = $DB->get_record('user', array('username' => $data->username), 'email');
         core_login_user_password_reset($data->username, $user_field->email);
     }
@@ -34,7 +34,7 @@ if ($mform->is_cancelled()) {
     exit;
 }
 
-echo $OUTPUT->header();
-echo $OUTPUT->box(get_string('passwordforgotteninstructions2'), 'generalbox boxwidthnormal boxaligncenter');
-$mform->display();
-echo $OUTPUT->footer();
+//echo $OUTPUT->header();
+//echo $OUTPUT->box(get_string('passwordforgotteninstructions2'), 'generalbox boxwidthnormal boxaligncenter');
+//$mform->display();
+//echo $OUTPUT->footer();
