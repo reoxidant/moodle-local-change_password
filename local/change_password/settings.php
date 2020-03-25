@@ -22,4 +22,11 @@ if ($hassiteconfig) {
     $default = '1';
     $setting = new admin_setting_configtext($name, $title, null, $default, PARAM_INT);
     $settings->add($setting);
+
+    $name = 'local_change_password/maxpasswordlength';
+    $title = get_string('maxpasswordlength', 'local_change_password');
+    $default = '30';
+    $setting = new admin_setting_configtext($name, $title, null, $default, PARAM_INT);
+    $settings->add($setting);
+
 }

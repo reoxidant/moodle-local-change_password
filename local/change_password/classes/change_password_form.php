@@ -82,7 +82,7 @@ class change_password_form extends moodleform
                 return $errors;
             }
 
-            if (user_is_previously_used_password($user->id, $data['password1'])) {
+            if (user_is_previously_used_password($user->id, $data['newpassword1'])) {
                 $errors['newpassword1'] = get_string('errorpasswordreused', 'local_change_password');
                 $errors['newpassword2'] = get_string('errorpasswordreused', 'local_change_password');
             }

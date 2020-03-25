@@ -5,7 +5,7 @@ require_once($CFG->libdir . '/moodlelib.php');
 function my_check_password_policy($password, &$errmsg, $data = null)
 {
     global $CFG;
-    $CFG->maxpasswordlength = 30;
+    $config_data = get_config('local_change_password');
 
     if (!empty($CFG->passwordpolicy)) {
         $errmsg = '';
@@ -15,8 +15,8 @@ function my_check_password_policy($password, &$errmsg, $data = null)
             $errmsg .= '<div>' . get_string('errorminpasswordlength', 'local_change_password', $CFG->minpasswordlength) . '</div>';
         }
         //не больше 30 символов
-        if (core_text::strlen($password) >= $CFG->maxpasswordlength) {
-            $errmsg .= '<div>' . get_string('errormaxpasswordlength', 'local_change_password', $CFG->maxpasswordlength) . '</div>';
+        if (core_text::strlen($password) >= $config_data->maxpasswordlength) {
+            $errmsg .= '<div>' . get_string('errormaxpasswordlength', 'local_change_password', $config_data->maxpasswordlength) . '</div>';
         }
         //использовать имя своей учетной записи в пароле, не более чем два символа подряд из username или Firstname
         if (substr($password, 0, 3) == substr(is_object($data) ? $data->username : $data['username'], 0, 3) || substr($password, 0, 3) == mb_substr(is_object($data) ? $data->firstname : $data['firstName'], 0, 3)) {

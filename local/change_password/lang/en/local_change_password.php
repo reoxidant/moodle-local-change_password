@@ -65,3 +65,4 @@ $string['change_password:change'] = 'Can to change password LDAP';
 $string['ws_user'] = 'User connecting to 1C';
 $string['ws_pass'] = 'Password for connecting to 1C';
 $string['ws_timeout'] = 'Connection timeout to 1C (in seconds)';
+$string['maxpasswordlength'] = 'Maximum number of characters in the password';
