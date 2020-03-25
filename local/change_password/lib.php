@@ -228,7 +228,7 @@ function send_password_to_user_email($user, $resetrecord)
     $data->lastname = $user->lastname;
     $data->username = $user->username;
     $data->sitename = format_string($site->fullname);
-    $data->link = $CFG->wwwroot . '/local/forgot_password/view.php?token=' . $resetrecord->token;
+    $data->link = $CFG->wwwroot . '/local/change_password/view.php?token=' . $resetrecord->token;
 
     $data->admin = generate_email_signoff();
     $data->resetminutes = $pwresetmins;

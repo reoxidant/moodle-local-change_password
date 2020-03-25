@@ -77,8 +77,8 @@ class change_password_form extends moodleform
             }
 
             if ($data['password'] == $data['newpassword1']) {
-                $errors['newpassword1'] = get_string('mustchangepassword', 'local_forgot_password');
-                $errors['newpassword2'] = get_string('mustchangepassword', 'local_forgot_password');
+                $errors['newpassword1'] = get_string('mustchangepassword', 'local_change_password');
+                $errors['newpassword2'] = get_string('mustchangepassword', 'local_change_password');
                 return $errors;
             }
 
