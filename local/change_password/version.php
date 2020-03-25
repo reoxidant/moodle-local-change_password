@@ -2,7 +2,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2020032500;
+$plugin->version = 2020032501;
 $plugin->requires = 2019111200;
 $plugin->component = 'local_change_password';
 $plugin->cron = 0;
