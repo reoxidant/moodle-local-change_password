@@ -62,3 +62,6 @@ $string['setpasswordinstructions'] = 'Please enter your new password below, then
 $string['passwordset'] = 'Your password has been set.';
 $string['userchangepasswordlink'] = '<br /> You may be able to change your password at your <a href="{$a->wwwroot}/login/change_password.php">{$a->description}</a> provider.';
 $string['change_password:change'] = 'Can to change password LDAP';
+$string['ws_user'] = 'User connecting to 1C';
+$string['ws_pass'] = 'Password for connecting to 1C';
+$string['ws_timeout'] = 'Connection timeout to 1C (in seconds)';
