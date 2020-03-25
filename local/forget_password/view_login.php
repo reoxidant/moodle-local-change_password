@@ -34,7 +34,9 @@ if ($mform->is_cancelled()) {
     exit;
 }
 
-//echo $OUTPUT->header();
-//echo $OUTPUT->box(get_string('passwordforgotteninstructions2'), 'generalbox boxwidthnormal boxaligncenter');
-//$mform->display();
-//echo $OUTPUT->footer();
+if(empty($token)){
+    echo $OUTPUT->header();
+    echo $OUTPUT->box(get_string('passwordforgotteninstructions2'), 'generalbox boxwidthnormal boxaligncenter');
+    $mform->display();
+    echo $OUTPUT->footer();
+}
