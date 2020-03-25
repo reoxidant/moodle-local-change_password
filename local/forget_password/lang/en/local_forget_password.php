@@ -1,6 +1,6 @@
 <?php
 
-$string['pluginname'] = "Forget Password Web Service";
+$string['pluginname'] = "Password Recovery Web Service";
 $string['username'] = 'Username';
 $string['criticalerror'] = 'Critical Error! Wrong password.';
 $string['passwordsdiffer'] = 'These passwords do not match';
