@@ -2,8 +2,8 @@
 require_once('../../config.php');
 require_once($CFG->libdir . '/authlib.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
-require_once($CFG->dirroot . '/local/forgot_password/lib.php');
-require_once($CFG->dirroot . '/local/forgot_password/classes/set_new_password_form.php');
+require_once($CFG->dirroot . '/local/change_password/lib.php');
+require_once($CFG->dirroot . '/local/change_password/classes/set_new_password_form.php');
 
 // Token is correct, and unexpired.
 $mform = new set_new_password_form(null, $user);
@@ -17,7 +17,7 @@ if (empty($data)) {
     $setdata->token = $user->token;
     $mform->set_data($setdata);
     echo $OUTPUT->header();
-    echo $OUTPUT->box(get_string('setpasswordinstructions', 'local_forgot_password'), 'generalbox boxwidthnormal boxaligncenter');
+    echo $OUTPUT->box(get_string('setpasswordinstructions', 'local_change_password'), 'generalbox boxwidthnormal boxaligncenter');
     $mform->display();
     echo $OUTPUT->footer();
     return;
@@ -50,5 +50,5 @@ if (empty($data)) {
     // Plugins can perform post set password actions once data has been validated.
     // core_login_post_set_password_requests($data, $user);
 
-    redirect($urltogo, get_string('passwordset', 'local_forgot_password'), 1);
+    redirect($urltogo, get_string('passwordset', 'local_change_password'), 1);
 }
