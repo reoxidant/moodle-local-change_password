@@ -12,33 +12,33 @@ function my_check_password_policy($password, &$errmsg, $data = null)
 
         //не менее 8 символов
         if (core_text::strlen($password) < $CFG->minpasswordlength) {
-            $errmsg .= '<div>' . get_string('errorminpasswordlength', 'local_forget_password', $CFG->minpasswordlength) . '</div>';
+            $errmsg .= '<div>' . get_string('errorminpasswordlength', 'local_forgot_password', $CFG->minpasswordlength) . '</div>';
         }
         //не больше 30 символов
         if (core_text::strlen($password) >= $CFG->maxpasswordlength) {
-            $errmsg .= '<div>' . get_string('errormaxpasswordlength', 'local_forget_password', $CFG->maxpasswordlength) . '</div>';
+            $errmsg .= '<div>' . get_string('errormaxpasswordlength', 'local_forgot_password', $CFG->maxpasswordlength) . '</div>';
         }
         //использовать имя своей учетной записи в пароле, не более чем два символа подряд из username или Firstname
         if (substr($password, 0, 3) == substr(is_object($data) ? $data->username : $data['username'], 0, 3) || substr($password, 0, 3) == mb_substr(is_object($data) ? $data->firstname : $data['firstName'], 0, 3)) {
-            $errmsg .= '<div>' . get_string('errormatchpasswordandusername', 'local_forget_password', $CFG->minpasswordlength) . '</div>';
+            $errmsg .= '<div>' . get_string('errormatchpasswordandusername', 'local_forgot_password', $CFG->minpasswordlength) . '</div>';
         }
         //Проверка на использование верних и нижних регистров
         if (preg_match_all('/[[:digit:]]/u', $password, $matches) < $CFG->minpassworddigits) {
-            $errmsg .= '<div>' . get_string('errorminpassworddigits', 'local_forget_password', $CFG->minpassworddigits) . '</div>';
+            $errmsg .= '<div>' . get_string('errorminpassworddigits', 'local_forgot_password', $CFG->minpassworddigits) . '</div>';
         }
         if (preg_match_all('/[[:lower:]]/u', $password, $matches) < $CFG->minpasswordlower) {
-            $errmsg .= '<div>' . get_string('errorminpasswordlower', 'local_forget_password', $CFG->minpasswordlower) . '</div>';
+            $errmsg .= '<div>' . get_string('errorminpasswordlower', 'local_forgot_password', $CFG->minpasswordlower) . '</div>';
         }
         if (preg_match_all('/[[:upper:]]/u', $password, $matches) < $CFG->minpasswordupper) {
-            $errmsg .= '<div>' . get_string('errorminpasswordupper', 'local_forget_password', $CFG->minpasswordupper) . '</div>';
+            $errmsg .= '<div>' . get_string('errorminpasswordupper', 'local_forgot_password', $CFG->minpasswordupper) . '</div>';
         }
         //В пароле не должны быть только буквы, а так-же не буквенные символы.
         if (preg_match_all('/[^[:upper:][:lower:][:digit:]]/u', $password, $matches) < $CFG->minpasswordnonalphanum) {
-            $errmsg .= '<div>' . get_string('errorminpasswordnonalphanum', 'local_forget_password', $CFG->minpasswordnonalphanum) . '</div>';
+            $errmsg .= '<div>' . get_string('errorminpasswordnonalphanum', 'local_forgot_password', $CFG->minpasswordnonalphanum) . '</div>';
         }
         //проверка на одинаковые символы
         if (!check_consecutive_identical_characters($password, $CFG->maxconsecutiveidentchars)) {
-            $errmsg .= '<div>' . get_string('errormaxconsecutiveidentchars', 'local_forget_password', $CFG->maxconsecutiveidentchars) . '</div>';
+            $errmsg .= '<div>' . get_string('errormaxconsecutiveidentchars', 'local_forgot_password', $CFG->maxconsecutiveidentchars) . '</div>';
         }
     }
 
@@ -185,7 +185,7 @@ function core_login_token_update_password($token)
         // (suspicious)
         // Direct the user to the forgot password page to request a password reset.
         echo $OUTPUT->header();
-        notice(get_string('noresetrecord'), $forgotpasswordurl);
+        notice(get_string('noresetrecord', 'local_forgot_password'), $forgotpasswordurl);
         die; // Never reached.
     }
     if ($user->timerequested < (time() - $pwresettime)) {
@@ -193,20 +193,20 @@ function core_login_token_update_password($token)
         // Direct the user to the forgot password page to request a password reset.
         $pwresetmins = floor($pwresettime / MINSECS);
         echo $OUTPUT->header();
-        notice(get_string('resetrecordexpired', '', $pwresetmins), $forgotpasswordurl);
+        notice(get_string('resetrecordexpired', 'local_forgot_password', '', $pwresetmins), $forgotpasswordurl);
         die; // Never reached.
     }
 
     if ($user->auth === 'nologin' or !is_enabled_auth($user->auth)) {
         // Bad luck - user is not able to login, do not let them set password.
         echo $OUTPUT->header();
-        print_error('forgotteninvalidurl');
+        print_error('forgotteninvalidurl', 'local_forgot_password');
         die; // Never reached.
     }
 
     // Check this isn't guest user.
     if (isguestuser($user)) {
-        print_error('cannotresetguestpwd');
+        print_error('cannotresetguestpwd', 'local_forgot_password');
     }
 
     require_once('view_token_success.php');
@@ -228,13 +228,13 @@ function send_password_to_user_email($user, $resetrecord)
     $data->lastname = $user->lastname;
     $data->username = $user->username;
     $data->sitename = format_string($site->fullname);
-    $data->link = $CFG->wwwroot . '/local/forget_password/view.php?token=' . $resetrecord->token;
+    $data->link = $CFG->wwwroot . '/local/forgot_password/view.php?token=' . $resetrecord->token;
 
     $data->admin = generate_email_signoff();
     $data->resetminutes = $pwresetmins;
 
-    $message = get_string('emailresetconfirmation', '', $data);
-    $subject = get_string('emailresetconfirmationsubject', '', format_string($site->fullname));
+    $message = get_string('emailresetconfirmation', 'local_forgot_password', $data);
+    $subject = get_string('emailresetconfirmationsubject', 'local_forgot_password', format_string($site->fullname));
 
     // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
     return email_to_user($user, $supportuser, $subject, $message);

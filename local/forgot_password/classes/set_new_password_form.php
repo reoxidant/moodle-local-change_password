@@ -2,7 +2,7 @@
 require_once("$CFG->libdir/formslib.php");
 require_once($CFG->dirroot . '/user/lib.php');
 require_once($CFG->dirroot . '/login/lib.php');
-require_once($CFG->dirroot . '/local/forget_password/lib.php');
+require_once($CFG->dirroot . '/local/forgot_password/lib.php');
 
 class set_new_password_form extends moodleform
 {
@@ -12,34 +12,34 @@ class set_new_password_form extends moodleform
 
         $mform = $this->_form;
         $mform->setDisableShortforms(true);
-        $mform->addElement('header', 'forgetpassword', get_string('pluginname', 'local_forget_password'), '');
+        $mform->addElement('header', 'forgetpassword', get_string('pluginname', 'local_forgot_password'), '');
 
         // Token gives authority to change password.
         $mform->addElement('hidden', 'token', '');
         $mform->setType('token', PARAM_ALPHANUM);
 
         // Visible elements.
-        $mform->addElement('hidden', 'username', get_string('username'));
+        $mform->addElement('hidden', 'username', get_string('username', 'local_forgot_password'));
         $mform->setType('username', PARAM_RAW);
-        $mform->addElement('static', 'username2', get_string('username'));
+        $mform->addElement('static', 'username2', get_string('username', 'local_forgot_password'));
 
         $policies = array();
         if (!empty($CFG->passwordpolicy)) {
             $policies[] = print_password_policy();
         }
         if (!empty($CFG->passwordreuselimit) and $CFG->passwordreuselimit > 0) {
-            $policies[] = get_string('informminpasswordreuselimit', 'auth', $CFG->passwordreuselimit);
+            $policies[] = get_string('informminpasswordreuselimit', 'local_forgot_password', $CFG->passwordreuselimit);
         }
         if ($policies) {
             $mform->addElement('static', 'passwordpolicyinfo', '', implode('<br />', $policies));
         }
 
-        $mform->addElement('password', 'newpassword_log1', get_string('newpassword', 'local_forget_password'));
-        $mform->addRule('newpassword_log1', get_string('required', 'local_forget_password'), 'required', null, 'client');
+        $mform->addElement('password', 'newpassword_log1', get_string('newpassword', 'local_forgot_password'));
+        $mform->addRule('newpassword_log1', get_string('required', 'local_forgot_password'), 'required', null, 'client');
         $mform->setType('newpassword_log1', PARAM_RAW);
 
-        $mform->addElement('password', 'newpassword_log2', get_string('newpassword', 'local_forget_password') . ' (' . get_String('again', 'local_forget_password') . ')');
-        $mform->addRule('newpassword_log2', get_string('required', 'local_forget_password'), 'required', null, 'client');
+        $mform->addElement('password', 'newpassword_log2', get_string('newpassword', 'local_forgot_password') . ' (' . get_String('again', 'local_forgot_password') . ')');
+        $mform->addRule('newpassword_log2', get_string('required', 'local_forgot_password'), 'required', null, 'client');
         $mform->setType('newpassword_log2', PARAM_RAW);
 
         // buttons
@@ -62,8 +62,8 @@ class set_new_password_form extends moodleform
 
         // Ignore submitted username.
         if ($data['newpassword_log1'] <> $data['newpassword_log2']) {
-            $errors['newpassword_log1'] = get_string('passwordsdiffer', 'local_forget_password');
-            $errors['newpassword_log2'] = get_string('passwordsdiffer', 'local_forget_password');
+            $errors['newpassword_log1'] = get_string('passwordsdiffer', 'local_forgot_password');
+            $errors['newpassword_log2'] = get_string('passwordsdiffer', 'local_forgot_password');
             return $errors;
         }
 
@@ -75,8 +75,8 @@ class set_new_password_form extends moodleform
         }
 
         if (user_is_previously_used_password($user->id, $data['newpassword_log1'])) {
-            $errors['newpassword_log1'] = get_string('errorpasswordreused', 'local_forget_password');
-            $errors['newpassword_log2'] = get_string('errorpasswordreused', 'local_forget_password');
+            $errors['newpassword_log1'] = get_string('errorpasswordreused', 'local_forgot_password');
+            $errors['newpassword_log2'] = get_string('errorpasswordreused', 'local_forgot_password');
         }
 
         return $errors;

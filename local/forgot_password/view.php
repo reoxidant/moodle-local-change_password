@@ -1,9 +1,9 @@
 <?php
 require_once('../../config.php');
-require_once($CFG->dirroot . '/local/forget_password/classes/set_new_password_form.php');
-require_once($CFG->dirroot . '/local/forget_password/classes/forget_password_form.php');
+require_once($CFG->dirroot . '/local/forgot_password/classes/set_new_password_form.php');
+require_once($CFG->dirroot . '/local/forgot_password/classes/forgot_password_form.php');
 require_once($CFG->libdir . '/authlib.php');
-require_once($CFG->dirroot . '/local/forget_password/lib.php');
+require_once($CFG->dirroot . '/local/forgot_password/lib.php');
 
 $id = optional_param('id', SITEID, PARAM_INT); // current course
 $token = optional_param('token', false, PARAM_ALPHANUM);
@@ -14,11 +14,11 @@ if (!$course = $DB->get_record('course', array('id' => $id))) {
 
 //system context
 $context_sys = context_system::instance();
-$PAGE->set_url('/local/forget_password/view.php', array('id' => $id));
+$PAGE->set_url('/local/forgot_password/view.php', array('id' => $id));
 $PAGE->set_context($context_sys);
 $PAGE->set_heading($COURSE->fullname);
 
-$strparticipants = get_string('participants');
+$strparticipants = get_string('participants', 'local_forgot_password');
 
 if (!$course = $DB->get_record('course', array('id' => $id))) {
     print_error('invalidcourseid');
@@ -35,7 +35,7 @@ if (!empty($SESSION->password_reset_token)) {
 if (!empty($token)) {
     if (!$tokeninsession && $_SERVER['REQUEST_METHOD'] === 'GET') {
         $SESSION->password_reset_token = $token;
-        redirect($CFG->wwwroot . '/local/forget_password/view.php');
+        redirect($CFG->wwwroot . '/local/forgot_password/view.php');
     } else {
         core_login_token_update_password($token);
     }
@@ -48,29 +48,29 @@ if (!isloggedin() OR isguestuser()) {
     $PAGE->set_context(context_user::instance($USER->id));
     $PAGE->set_pagelayout('admin');
     $PAGE->set_course($course);
-// do not require change own password cap if change forced
+    // do not require change own password cap if change forced
     if (!get_user_preferences('auth_forcepasswordchange', false)) {
         require_capability('moodle/user:changeownpassword', $context_sys);
     }
 
-// do not allow "Logged in as" users to change any passwords
+    // do not allow "Logged in as" users to change any passwords
     if (\core\session\manager::is_loggedinas()) {
         print_error('cannotcallscript');
     }
 
-//Don't Allow User MNet
+    //Don't Allow User MNet
     if (is_mnet_remote_user($USER)) {
-        $message = get_string('usercannotchangepassword', 'mnet');
+        $message = get_string('usercannotchangepassword', 'local_forgot_password');
         if ($idprovider = $DB->get_record('mnet_host', array('id' => $USER->mnethostid))) {
-            $message .= get_string('userchangepasswordlink', 'mnet', $idprovider);
+            $message .= get_string('userchangepasswordlink', 'local_forgot_password', $idprovider);
         }
         print_error('userchangepasswordlink', 'mnet', '', $message);
     }
 
-// load the appropriate auth plugin
+    // load the appropriate auth plugin
     $userauth = get_auth_plugin($USER->auth);
 
-//check user allows
+    //check user allows
     if (!$userauth->can_change_password()) {
         print_error('nopasswordchange', 'auth');
     }
@@ -80,7 +80,7 @@ if (!isloggedin() OR isguestuser()) {
         redirect($changeurl);
     }
 
-    $mform = new forget_password_form();
+    $mform = new forgot_password_form();
     $mform->set_data(array('id' => $course->id));
 
     if ($mform->is_cancelled()) {
@@ -108,7 +108,7 @@ if (!isloggedin() OR isguestuser()) {
         unset_user_preference('auth_forcepasswordchange', $USER);
         unset_user_preference('create_password', $USER);
 
-        $strpasswordchanged = get_string('passwordchanged');
+        $strpasswordchanged = get_string('passwordchanged', 'local_forgot_password');
 
         // Plugins can perform post password change actions once data has been validated.
         core_login_post_change_password_requests($data);
@@ -125,7 +125,7 @@ if (!isloggedin() OR isguestuser()) {
         exit;
     }
 
-    $strchangepassword = get_string('changepassword');
+    $strchangepassword = get_string('changepassword', 'local_forgot_password');
 
     $fullname = fullname($USER, true);
 
@@ -134,7 +134,7 @@ if (!isloggedin() OR isguestuser()) {
     echo $OUTPUT->header();
 
     if (get_user_preferences('auth_forcepasswordchange')) {
-        echo $OUTPUT->notification(get_string('forcepasswordchangenotice'));
+        echo $OUTPUT->notification(get_string('forcepasswordchangenotice', 'local_forgot_password'));
     }
     $mform->display();
     echo $OUTPUT->footer();
