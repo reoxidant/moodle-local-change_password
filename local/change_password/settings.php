@@ -4,7 +4,7 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     require_once($CFG->dirroot . '/local/change_password/lib.php');
 
-    $settings = new admin_settingpage('change_password', get_string('pluginname', 'change_password'));
+    $settings = new admin_settingpage('change_password', get_string('pluginname', 'local_change_password'));
     $ADMIN->add('localplugins', $settings);
 
     $name = 'local_change_password/ws_user';
