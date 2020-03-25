@@ -61,3 +61,4 @@ $string['forcepasswordchangenotice'] = 'You must change your password to proceed
 $string['setpasswordinstructions'] = 'Please enter your new password below, then save changes.';
 $string['passwordset'] = 'Your password has been set.';
 $string['userchangepasswordlink'] = '<br /> You may be able to change your password at your <a href="{$a->wwwroot}/login/change_password.php">{$a->description}</a> provider.';
+$string['change_password:change'] = 'Can to change password LDAP';

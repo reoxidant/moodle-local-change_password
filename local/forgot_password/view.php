@@ -20,10 +20,6 @@ $PAGE->set_heading($COURSE->fullname);
 
 $strparticipants = get_string('participants', 'local_forgot_password');
 
-if (!$course = $DB->get_record('course', array('id' => $id))) {
-    print_error('invalidcourseid');
-}
-
 // Fetch the token from the session, if present, and unset the session var immediately.
 $tokeninsession = false;
 if (!empty($SESSION->password_reset_token)) {

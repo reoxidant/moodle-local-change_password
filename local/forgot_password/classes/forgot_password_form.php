@@ -2,7 +2,7 @@
 
 require_once("$CFG->libdir/formslib.php");
 require_once($CFG->dirroot . '/user/lib.php');
-require_once($CFG->dirroot . '/local/forget_password/lib.php');
+require_once($CFG->dirroot . '/local/forgot_password/lib.php');
 
 class forgot_password_form extends moodleform
 {
@@ -96,9 +96,10 @@ class forgot_password_form extends moodleform
 
         } else {
             //check if is set username
-            $data['usernames'] = array_keys($DB->get_records('user', array(), '', 'username'));
 
-            if (!$username = in_array($data['username'], $data['usernames'])) {
+            $user = $DB->get_record('user', array('username' => $data['username']), 'username');
+
+            if (!$user->username) {
                 $errors['username'] = get_string('usernameisnotundefined', 'local_forgot_password');
                 return $errors;
             }
