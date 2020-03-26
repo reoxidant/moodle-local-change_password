@@ -1,1 +1,1 @@
-# moodle_change_password
+# moodle-local-change_password
