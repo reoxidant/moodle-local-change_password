@@ -14,6 +14,11 @@ if (!$course = $DB->get_record('course', array('id' => $id))) {
 
 //system context
 $context_sys = context_system::instance();
+
+if(!has_capability('local/change_password:change', $context_sys)){
+    print_error('password_access_exception');
+}
+
 $PAGE->set_url('/local/change_password/view.php', array('id' => $id));
 $PAGE->set_context($context_sys);
 $PAGE->set_heading($COURSE->fullname);

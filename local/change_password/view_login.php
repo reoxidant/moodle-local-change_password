@@ -2,6 +2,10 @@
 $systemcontext = context_system::instance();
 $PAGE->set_context($systemcontext);
 
+if(!has_capability('local/change_password:change', $systemcontext)){
+    print_error('password_access_exception');
+}
+
 // setup text strings
 $strforgotten = get_string('passwordforgotten', 'local_change_password');
 $strlogin = get_string('login', 'local_change_password');

@@ -68,3 +68,4 @@ $string['ws_user'] = 'Пользователь подключения к 1С';
 $string['ws_pass'] = 'Пароль подключения к 1С';
 $string['ws_timeout'] = 'Таймаут подключения к 1С (в секундах)';
 $string['maxpasswordlength'] = 'Максимальное количество символов в пароле';
+$string['password_access_exception'] = 'Вы не можите изменить пароль LDAP';
