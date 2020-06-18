@@ -70,4 +70,6 @@ $string['minpasswordlength'] = 'Minimum number of characters in the password';
 $string['minpasswordnonalphanum'] = 'Non-alphanumeric characters';
 $string['maxconsecutiveidentchars'] = 'Consecutive identical characters';
 $string['minpasswordupper'] = 'Uppercase letters';
+$string['minpasswordlower'] = 'Lowercase letters';
+$string['minpassworddigits'] = 'Digits';
 $string['password_access_exception'] = 'You can\'t to change password LDAP';

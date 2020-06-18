@@ -47,5 +47,28 @@ if ($hassiteconfig) {
     $setting = new admin_setting_configtext($name, $title, null, $default, PARAM_INT);
     $settings->add($setting);
 
+    $name = 'local_change_password/minpasswordupper';
+    $title = get_string('minpasswordupper', 'local_change_password');
+    $default = '1';
+    $setting = new admin_setting_configtext($name, $title, null, $default, PARAM_INT);
+    $settings->add($setting);
+
+    $name = 'local_change_password/minpasswordlower';
+    $title = get_string('minpasswordlower', 'local_change_password');
+    $default = '1';
+    $setting = new admin_setting_configtext($name, $title, null, $default, PARAM_INT);
+    $settings->add($setting);
+
+    $name = 'local_change_password/minpassworddigits';
+    $title = get_string('minpassworddigits', 'local_change_password');
+    $default = '1';
+    $setting = new admin_setting_configtext($name, $title, null, $default, PARAM_INT);
+    $settings->add($setting);
+
+    $name = 'local_change_password/minpassworddigits';
+    $title = get_string('minpassworddigits', 'local_change_password');
+    $default = '1';
+    $setting = new admin_setting_configtext($name, $title, null, $default, PARAM_INT);
+    $settings->add($setting);
 
 }
